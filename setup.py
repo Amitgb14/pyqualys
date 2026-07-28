@@ -25,14 +25,29 @@ def read_version():
     return match.group(1)
 
 
+def read_long_description():
+    """Read README.md for the PyPI project page."""
+    here = os.path.abspath(os.path.dirname(__file__))
+    with io.open(os.path.join(here, 'README.md'), encoding='utf-8') as handle:
+        return handle.read()
+
+
 VERSION = read_version()
 
 setup(name='pyqualys',
       version=VERSION,
       description="Qualys's python API client library.",
-      url='https://github.com/Amitgb14/pyqualys.git',
+      long_description=read_long_description(),
+      long_description_content_type='text/markdown',
+      url='https://github.com/Amitgb14/pyqualys',
+      project_urls={
+          'Source': 'https://github.com/Amitgb14/pyqualys',
+          'Issues': 'https://github.com/Amitgb14/pyqualys/issues',
+      },
       author='Amit Ghadge',
       author_email='amitg.b14@gmail.com',
+      license='MIT',
+      python_requires='>=3.7',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
