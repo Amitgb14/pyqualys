@@ -1,0 +1,20 @@
+{
+  "name": "pyqualys",
+  "description": "Qualys vulnerability management tooling for Claude Code, built on the pyqualys API client",
+  "owner": {
+    "name": "Amit Ghadge",
+    "email": "amitg.b14@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "pyqualys",
+      "source": "./plugin",
+      "description": "Launch and triage Qualys VM scans, list host assets, and pull VMDR detections",
+      "version": "0.1.0",
+      "author": {
+        "name": "Amit Ghadge"
+      },
+      "keywords": ["qualys", "vulnerability", "vmdr", "security"]
+    }
+  ]
+}
