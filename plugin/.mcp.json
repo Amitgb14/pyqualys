@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "qualys": {
+      "command": "uvx",
+      "args": [
+        "--python", "3.12",
+        "--from", "pyqualys[mcp]==0.1.0",
+        "pyqualys-mcp"
+      ],
+      "env": {
+        "QUALYS_API_URL": "${user_config.qualys_api_url}",
+        "QUALYS_USERNAME": "${user_config.qualys_username}",
+        "QUALYS_PASSWORD": "${user_config.qualys_password}"
+      }
+    }
+  }
+}

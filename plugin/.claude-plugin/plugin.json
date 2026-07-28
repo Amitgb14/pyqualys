@@ -1,0 +1,42 @@
+{
+  "name": "pyqualys",
+  "displayName": "Qualys VM",
+  "version": "0.1.0",
+  "description": "Launch and triage Qualys VM scans, list host assets, and pull VMDR detections",
+  "author": {
+    "name": "Amit Ghadge",
+    "email": "amitg.b14@gmail.com"
+  },
+  "homepage": "https://github.com/Amitgb14/pyqualys",
+  "repository": "https://github.com/Amitgb14/pyqualys",
+  "license": "MIT",
+  "keywords": [
+    "qualys",
+    "vulnerability",
+    "vmdr",
+    "security",
+    "scanning"
+  ],
+  "userConfig": {
+    "qualys_api_url": {
+      "type": "string",
+      "title": "Qualys API URL",
+      "description": "Your platform's API base URL. This is per-POD and getting it wrong causes confusing auth failures. Find yours under Help > About in the Qualys UI, e.g. https://qualysapi.qg2.apps.qualys.com/ for QG2 US.",
+      "default": "https://qualysapi.qualys.com/",
+      "required": true
+    },
+    "qualys_username": {
+      "type": "string",
+      "title": "Qualys username",
+      "description": "A user with API access. Prefer a dedicated account with the narrowest role that permits scan launch and read.",
+      "required": true
+    },
+    "qualys_password": {
+      "type": "string",
+      "title": "Qualys password",
+      "description": "Stored in your OS keychain, never written to settings.json.",
+      "sensitive": true,
+      "required": true
+    }
+  }
+}
