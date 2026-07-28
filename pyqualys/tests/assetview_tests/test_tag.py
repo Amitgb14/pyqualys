@@ -6,6 +6,8 @@ import pyqualys
 from pyqualys.utils import util
 
 
+@unittest.skipUnless(os.environ.get("QUALYS_LIVE_TESTS"),
+                     "requires live Qualys credentials")
 class TestTag(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

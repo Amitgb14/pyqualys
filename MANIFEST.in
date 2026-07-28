@@ -1,0 +1,8 @@
+# README.md is read by setup.py at build time, so it must be in the sdist
+# or building a wheel from the sdist fails.
+include README.md
+include LICENSE
+include requirements.txt
+include TODO.md
+recursive-include docs *.md
+global-exclude __pycache__ *.py[cod]
