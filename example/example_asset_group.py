@@ -14,7 +14,9 @@ new_asset_group = service.add_asset(title="myLinux", ips="10.10.10.1")
 print("Add asset group: %s" % new_asset_group)
 
 # Update Asset Group
-update_asset_group = service.update_asset(asset_group_id=1234, title="myOS", ips="10.10.10.1")
+update_asset_group = service.update_asset(asset_group_id=1234,
+                                          title="myOS",
+                                          ips="10.10.10.1")
 print("Update asset group: %s" % update_asset_group)
 
 # List of Asset Group

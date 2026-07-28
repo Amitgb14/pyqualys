@@ -6,6 +6,8 @@ import pyqualys
 from pyqualys.utils import util
 
 
+@unittest.skipUnless(os.environ.get("QUALYS_LIVE_TESTS"),
+                     "requires live Qualys credentials")
 class TestHostAsset(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -23,16 +25,17 @@ class TestHostAsset(unittest.TestCase):
         expected_output = 'SUCCESS'
         response = self.__service.create_host_asset(content)
         self.assertEqual(response['data']['responseCode'], expected_output)
-        TestHostAsset.host_asset_id = int(response['data']['data']['HostAsset']['id'])
+        asset = response['data']['data']['HostAsset']
+        TestHostAsset.host_asset_id = int(asset['id'])
 
     def test_02_get_host_asset(self):
         expected_output = 'SUCCESS'
-        response = self.__service.get_host_asset(asset_id=TestHostAsset.host_asset_id)
+        response = self.__service.get_host_asset(
+            asset_id=TestHostAsset.host_asset_id)
         self.assertEqual(response['data']['responseCode'], expected_output)
 
     def test_03_delete_host_asset(self):
         expected_output = 'SUCCESS'
-        response = self.__service.delete_host_asset(asset_id=TestHostAsset.host_asset_id)
+        response = self.__service.delete_host_asset(
+            asset_id=TestHostAsset.host_asset_id)
         self.assertEqual(response['data']['responseCode'], expected_output)
-
-

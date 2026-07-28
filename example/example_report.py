@@ -26,7 +26,8 @@ scan_report = service.report.scan_report(**data)
 print(scan_report)
 
 # Get report the scanner
-report = service.scanner.get_scan_report(echo_request=1,
-                               scan_ref="scan/1525944287.01369",
-                               output_format="json")
+report = service.scanner.get_scan_report(
+    echo_request=1,
+    scan_ref="scan/1525944287.01369",
+    output_format="json")
 print(report)

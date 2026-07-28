@@ -2,3 +2,21 @@
 __pycache__
 *.pyc
 credentials
+
+# Build artefacts
+build/
+dist/
+*.egg-info/
+
+# Virtualenvs
+venv/
+venv*/
+.venv/
+
+# Test/tool caches
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local sandbox tooling config, not part of the project
+.sandbox.yaml
