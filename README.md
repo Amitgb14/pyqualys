@@ -284,3 +284,24 @@ $ python -m unittest discover -s pyqualys/tests -t . -p 'test_*.py' -v
 
 The historical live tests are skipped unless `QUALYS_LIVE_TESTS` is set,
 and the MCP tests are skipped on Python 3.9 or when `mcp` is not installed.
+
+### Contract tests
+
+`pyqualys/tests/contract_tests/` is a separate category. The rest of the
+suite parses fixtures this project wrote, which proves the parsers are
+self-consistent; the contract tests parse response bodies and HTTP headers
+transcribed from the *Qualys API (VM and PA) User Guide* v10.39.1
+(10 July 2026), each annotated with the page it came from. When one of
+those disagrees with the code, the code is what is wrong.
+
+They cover the three things that cannot be checked by reading our own
+code: that every request goes to the URI and API version the guide
+documents for that operation, that the vendor's own sample bodies parse
+correctly including their CDATA indentation and pagination cursors, and
+that both kinds of HTTP 409 are handled - the rate-limit block that
+carries `X-RateLimit-ToWait-Sec` and the concurrency block that does not.
+
+This is a substitute for live validation, not a replacement. Nothing in
+this project has been run against a real Qualys subscription, so
+authentication, real rate-limit behaviour under load and pagination at
+volume remain unverified.
