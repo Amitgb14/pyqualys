@@ -201,6 +201,21 @@ Not changed on purpose: `asset_ips.py` still targets the legacy V1
 `msp/asset_ip.php` endpoints and `Reports` stays on `api/2.0/fo/report/`.
 
 
+Changes in 0.1.1
+-----------
+
+`qualys_list_vm_scans` now returns `sub_state` alongside `state`. Qualys
+qualifies a scan state with `STATUS/SUB_STATE`, and the MCP summary was
+dropping it. The case that matters is `state="Finished"` with
+`sub_state="No_Host"`: the scan ran to completion without reaching any
+host, so empty results mean the target was wrong, not that the hosts are
+healthy. Without the sub-state those two outcomes are indistinguishable.
+
+Library-level behaviour is unchanged - `scan_list()` always returned the
+full decoded response including `SUB_STATE`. Only the MCP summary was
+lossy.
+
+
 MCP server
 -----------
 

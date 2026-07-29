@@ -105,7 +105,28 @@ class TestScanListContract(ContractToolTestCase):
         self.assertEqual(scan.launch_datetime, "2024-12-30T07:32:52Z")
         self.assertEqual(scan.processed, "1")
 
-    async def test_02_cdata_values_arrive_clean(self):
+    async def test_02_sub_state_qualifies_the_state(self):
+        # The vendor sample is Finished with SUB_STATE No_Host: the scan
+        # ran to completion without reaching a host. Reporting only
+        # state="Finished" with no findings is indistinguishable from a
+        # genuinely clean scan, so the sub-state has to survive into the
+        # summary rather than being dropped in the mapping.
+        _, result = await self.invoke(server.qualys_list_vm_scans,
+                                      FakeResponse(vendor.SCAN_LIST_OUTPUT))
+        scan = result.scans[0]
+        self.assertEqual(scan.state, "Finished")
+        self.assertEqual(scan.sub_state, "No_Host")
+
+    async def test_03_absent_sub_state_is_none_not_an_error(self):
+        # Most scans carry STATUS/STATE with no SUB_STATE sibling.
+        body = vendor.SCAN_LIST_OUTPUT.replace(
+            "<SUB_STATE>No_Host</SUB_STATE>", "")
+        _, result = await self.invoke(server.qualys_list_vm_scans,
+                                      FakeResponse(body))
+        self.assertEqual(result.scans[0].state, "Finished")
+        self.assertIsNone(result.scans[0].sub_state)
+
+    async def test_04_cdata_values_arrive_clean(self):
         # TITLE and TARGET are printed as indented CDATA in the guide.
         _, result = await self.invoke(server.qualys_list_vm_scans,
                                       FakeResponse(vendor.SCAN_LIST_OUTPUT))
@@ -114,7 +135,7 @@ class TestScanListContract(ContractToolTestCase):
         self.assertNotIn("\n", scan.target or "")
         self.assertTrue((scan.target or "").startswith("65188eb1"))
 
-    async def test_03_single_scan_is_not_flattened_into_characters(self):
+    async def test_05_single_scan_is_not_flattened_into_characters(self):
         # One <SCAN> collapses to a dict rather than a list of dicts.
         # Iterating that dict directly yields its keys, and every scan
         # summary comes back empty.
@@ -123,7 +144,7 @@ class TestScanListContract(ContractToolTestCase):
         self.assertEqual(len(result.scans), 1)
         self.assertIsNotNone(result.scans[0].scan_ref)
 
-    async def test_04_the_30_day_default_is_disclosed(self):
+    async def test_06_the_30_day_default_is_disclosed(self):
         _, result = await self.invoke(server.qualys_list_vm_scans,
                                       FakeResponse(vendor.SCAN_LIST_OUTPUT))
         self.assertIn("30 days", result.note or "")

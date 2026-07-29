@@ -2,7 +2,7 @@
 import logging
 from .utils.connect import QualysAPI
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 # basicConfig defaults to stderr, so this is safe for the stdio MCP
 # transport. pyqualys.mcp.server still calls basicConfig first, because
