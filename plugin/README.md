@@ -40,6 +40,31 @@ never appear in tool output.
 | `qualys_list_hosts` | List host assets, with pagination |
 | `qualys_list_host_detections` | Pull VMDR detections (the vulnerability findings) |
 
+## Skills
+
+The tools above are primitives. The skills encode the workflow around them, so the model does not
+have to rediscover it each session.
+
+| Skill | Answers |
+| :--- | :--- |
+| `/pyqualys:scan` | "Scan these hosts" — launch, poll to completion, fetch |
+| `/pyqualys:triage` | "What should I fix first" — ranked remediation list |
+| `/pyqualys:inventory` | "What do we have" — host assets, paginated |
+
+Claude also invokes them on its own when a request matches; you don't have to type the slash
+command.
+
+Each one carries the platform behaviour that is easy to get wrong and expensive to get wrong:
+that scan launch is asynchronous, that Qualys blocks with 409 rather than 429, and that
+`qualys_list_host_detections` silently returns only New/Active/Re-Opened detections and hides
+information-gathered QIDs unless you ask for them.
+
+`/pyqualys:triage` states one limitation up front rather than working around it: detections carry
+QID and severity but **no title, CVE or patch guidance** — that data lives in the Qualys
+KnowledgeBase, which this plugin does not expose. The skill instructs the model to report the QID
+number rather than invent a description, because a plausible but wrong CVE mapping sends someone to
+patch the wrong thing.
+
 ### Scan launch is asynchronous
 
 `qualys_launch_vm_scan` returns a scan *reference* immediately — not results. The scan itself can
@@ -92,5 +117,11 @@ claude plugin validate ./plugin
 ## Caveats
 
 The Qualys endpoint versions this build targets (`api/3.0` for scan list, `api/5.0` for the host
-endpoints) were derived from vendor documentation and verified against mocks, not against a live
-subscription. Confirm behaviour on a non-production subscription before relying on it.
+endpoints) are checked against the vendor's own documented API Version History tables by the
+contract tests in `pyqualys/tests/contract_tests/`, which also parse response bodies transcribed
+from the Qualys API user guide.
+
+That is documentation-level verification, not live verification. **Nothing here has been run
+against a real Qualys subscription**, so authentication, rate-limit behaviour under load and
+pagination at volume remain unconfirmed. Confirm behaviour on a non-production subscription before
+relying on it.

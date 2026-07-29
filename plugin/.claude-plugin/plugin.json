@@ -1,7 +1,7 @@
 {
   "name": "pyqualys",
   "displayName": "Qualys VM",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Launch and triage Qualys VM scans, list host assets, and pull VMDR detections",
   "author": {
     "name": "Amit Ghadge",
