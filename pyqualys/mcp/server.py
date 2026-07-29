@@ -260,6 +260,11 @@ class ScanSummary(BaseModel):
     scan_ref: Optional[str] = Field(None, description="Scan reference.")
     title: Optional[str] = None
     state: Optional[str] = Field(None, description="Running, Finished, ...")
+    sub_state: Optional[str] = Field(
+        None,
+        description=("Qualifies state. No_Host on a Finished scan means "
+                     "the scan completed without reaching any host, which "
+                     "is a targeting failure, not a clean result."))
     launch_datetime: Optional[str] = None
     target: Optional[str] = None
     processed: Optional[str] = None
@@ -425,6 +430,11 @@ async def qualys_list_vm_scans(
     States are Running, Paused, Canceled, Finished, Error, Queued and
     Loading.
 
+    Check sub_state before reporting a finished scan as clean:
+    state="Finished" with sub_state="No_Host" means the scan completed
+    without reaching any host, so empty results mean the target was
+    wrong, not that the hosts are healthy.
+
     IMPORTANT: with no launched_after_datetime filter Qualys returns
     only scans from the past 30 days.
 
@@ -455,6 +465,7 @@ async def qualys_list_vm_scans(
             scan_ref=_text(_dig(scan, "REF")),
             title=_text(_dig(scan, "TITLE")),
             state=_text(_dig(scan, "STATUS", "STATE")),
+            sub_state=_text(_dig(scan, "STATUS", "SUB_STATE")),
             launch_datetime=_text(_dig(scan, "LAUNCH_DATETIME")),
             target=_text(_dig(scan, "TARGET")),
             processed=_text(_dig(scan, "PROCESSED"))))
