@@ -87,7 +87,7 @@ rather than allowing.
 
 ## Local development
 
-The plugin pins `pyqualys[mcp]==0.1.0` from PyPI. To develop against a local checkout instead, edit
+The plugin pins `pyqualys[mcp]==0.1.1` from PyPI. To develop against a local checkout instead, edit
 `.mcp.json` to point at your working tree:
 
 ```json

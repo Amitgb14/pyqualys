@@ -53,12 +53,11 @@ buys nothing and trips the platform's limits. If the user is present, prefer
 reporting the current state and letting them ask again over polling in a
 loop — an agent that sits blocked for an hour is not useful to anyone.
 
-`Finished` does not mean "found something". A scan that completed without
-reaching any host reports the same state as a successful one, so a finished
-scan with empty results is ambiguous: it may mean the target was clean, or
-that the target was wrong and nothing was scanned. Check the `target` field
-against what the user intended before reporting an all-clear, and say which
-of the two you are claiming.
+**Check `sub_state` before reporting a finished scan as clean.** `Finished`
+with `sub_state="No_Host"` means the scan ran to completion without reaching
+any host — empty results mean the target was wrong, not that the hosts are
+healthy. Report that as a targeting failure and say what the scan was
+pointed at, rather than as an all-clear.
 
 ### 4. Fetch
 

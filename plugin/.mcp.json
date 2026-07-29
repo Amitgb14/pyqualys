@@ -4,7 +4,7 @@
       "command": "uvx",
       "args": [
         "--python", "3.12",
-        "--from", "pyqualys[mcp]==0.1.0",
+        "--from", "pyqualys[mcp]==0.1.1",
         "pyqualys-mcp"
       ],
       "env": {
