@@ -154,8 +154,31 @@ service = VulnerabilityService(qualys.session, api="api/2.0/",
 ```
 
 
-Breaking changes in 0.1.0
+Changelog
 -----------
+
+Newest first. The Claude Code plugin under `plugin/` versions separately -
+its own history is at the end of this section.
+
+### 0.1.1
+
+`qualys_list_vm_scans` now returns `sub_state` alongside `state`. Qualys
+qualifies a scan state with `STATUS/SUB_STATE`, and the MCP summary was
+dropping it. The case that matters is `state="Finished"` with
+`sub_state="No_Host"`: the scan ran to completion without reaching any
+host, so empty results mean the target was wrong, not that the hosts are
+healthy. Without the sub-state those two outcomes are indistinguishable,
+and an agent polling a mis-targeted scan reports an all-clear.
+
+Library-level behaviour is unchanged - `scan_list()` always returned the
+full decoded response including `SUB_STATE`. Only the MCP summary was
+lossy.
+
+Also adds `pyqualys/tests/contract_tests/`, which parses response bodies
+and HTTP headers transcribed from the Qualys API user guide rather than
+from fixtures this project wrote. See the Tests section.
+
+### 0.1.0 - breaking changes
 
 1. **TLS verification is now on by default.** `APISession.verify_ssl`
    flipped from `False` to `True`; every request this library made used to
@@ -200,20 +223,19 @@ Breaking changes in 0.1.0
 Not changed on purpose: `asset_ips.py` still targets the legacy V1
 `msp/asset_ip.php` endpoints and `Reports` stays on `api/2.0/fo/report/`.
 
+### Claude Code plugin
 
-Changes in 0.1.1
------------
+`plugin/` packages the MCP server below as a [Claude Code
+plugin](https://code.claude.com/docs/en/plugins), so credentials are
+prompted once and stored in the OS keychain instead of being wired into a
+config file by hand. It is versioned independently of the library and
+pins an exact library version. See `plugin/README.md`.
 
-`qualys_list_vm_scans` now returns `sub_state` alongside `state`. Qualys
-qualifies a scan state with `STATUS/SUB_STATE`, and the MCP summary was
-dropping it. The case that matters is `state="Finished"` with
-`sub_state="No_Host"`: the scan ran to completion without reaching any
-host, so empty results mean the target was wrong, not that the hosts are
-healthy. Without the sub-state those two outcomes are indistinguishable.
-
-Library-level behaviour is unchanged - `scan_list()` always returned the
-full decoded response including `SUB_STATE`. Only the MCP summary was
-lossy.
+| Plugin | Pins | Adds |
+| --- | --- | --- |
+| 0.3.0 | `pyqualys[mcp]==0.1.1` | `qualys-analyst`, a read-only subagent for posture questions. Its `tools` allowlist covers only the four read-only tools, so it cannot launch or manage scans however it is prompted. |
+| 0.2.0 | `pyqualys[mcp]==0.1.1` | Three skills: `/pyqualys:scan`, `/pyqualys:triage`, `/pyqualys:inventory`. |
+| 0.1.0 | `pyqualys[mcp]==0.1.0` | Manifest, `userConfig` credential prompts, the bundled MCP server, and a `PreToolUse` guard that escalates `cancel` and `delete` to an explicit permission prompt. |
 
 
 MCP server
