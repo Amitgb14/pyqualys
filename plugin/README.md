@@ -65,6 +65,21 @@ KnowledgeBase, which this plugin does not expose. The skill instructs the model 
 number rather than invent a description, because a plausible but wrong CVE mapping sends someone to
 patch the wrong thing.
 
+## Agent
+
+`@pyqualys:qualys-analyst` is a **read-only** subagent for open-ended posture questions — "where
+are we most exposed", "what changed this month", "which hosts are worst" — the kind that need many
+detection queries rather than one lookup. Running them in a subagent keeps large detection dumps
+out of the main conversation; only its report comes back.
+
+Read-only is enforced structurally, not by instruction. The agent declares a `tools` allowlist of
+four read-only tools, so `qualys_launch_vm_scan` and `qualys_manage_vm_scan` are simply not
+reachable from it — an analyst cannot start or cancel scanning traffic no matter how it is
+prompted. Use `/pyqualys:scan` when you actually want a scan launched.
+
+`maxTurns` is capped at 30. Detection paging is unbounded in principle, and the rate limit is per
+subscription; the cap stops one open-ended question from consuming the whole team's API budget.
+
 ### Scan launch is asynchronous
 
 `qualys_launch_vm_scan` returns a scan *reference* immediately — not results. The scan itself can
